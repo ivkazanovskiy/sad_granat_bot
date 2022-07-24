@@ -15,7 +15,6 @@ import { EEvent, TQueryData } from '../types/query-data.type';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
-    console.log('🖨️ ~ query', query);
     if (!query.message || !query.data) return;
 
     const data: TQueryData = JSON.parse(query.data);

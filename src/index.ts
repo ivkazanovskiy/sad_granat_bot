@@ -29,7 +29,6 @@ async function main() {
   // await bot.setMyCommands(defaultCommands, { scope: { type: 'default' } });
 
   bot.onText(new RegExp(ECommand.start), async (msg) => {
-    console.log(msg);
     try {
       const user = await User.findOne({ tlgId: msg.chat.id });
       if (!user) {
@@ -158,10 +157,6 @@ async function main() {
 
   bot.on('callback_query', callbackQuery(bot));
 
-  bot.on('error', (msg) => {
-    console.log(msg);
-  });
-
   bot.onText(new RegExp(ECommand.authorize), async (msg) => {
     const user = await User.findOne({ tlgId: msg.chat.id });
     if (!user) {
@@ -228,11 +223,6 @@ async function main() {
       );
     }
 
-    if (msg.text === 'test') {
-      console.log(msg);
-      bot.sendMessage(msg.chat.id, '1');
-    }
-
     if (
       msg.text &&
       msg.text[0] !== '/' &&
@@ -249,11 +239,10 @@ async function main() {
         },
       });
     }
+
+    // clear the cache
+    notifyCache.delete(msg.chat.id);
   });
 }
-
-// bot.getChat(369908047).then((data) => {
-//   console.log(data);
-// });
 
 main();
