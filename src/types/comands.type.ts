@@ -3,4 +3,6 @@ export enum ECommand {
   schedule = '/schedule',
   subscribe = '/subscribe',
   unsubscribe = '/unsubscribe',
+  authorize = '/authorize',
+  notify = '/notify',
 }

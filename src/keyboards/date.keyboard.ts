@@ -1,5 +1,5 @@
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
-import { EGroupDate, ESubDate } from '../types/groups.type';
+import { EDate, EGroupDate } from '../types/date.type';
 import { EEvent } from '../types/query-data.type';
 import { quitButton } from './quit.button';
 
@@ -9,7 +9,7 @@ export const dateKeyboard: InlineKeyboardButton[][] = [
       text: EGroupDate.Mon_Wed,
       callback_data: JSON.stringify({
         event: EEvent.subscribeDate,
-        date: ESubDate.subMon,
+        date: EDate.Mon,
       }),
     },
   ],
@@ -18,7 +18,7 @@ export const dateKeyboard: InlineKeyboardButton[][] = [
       text: EGroupDate.Tue_Thu,
       callback_data: JSON.stringify({
         event: EEvent.subscribeDate,
-        date: ESubDate.subTue,
+        date: EDate.Tue,
       }),
     },
   ],
@@ -27,14 +27,14 @@ export const dateKeyboard: InlineKeyboardButton[][] = [
       text: EGroupDate.Sat,
       callback_data: JSON.stringify({
         event: EEvent.subscribeDate,
-        date: ESubDate.subSat,
+        date: EDate.Sat,
       }),
     },
     {
       text: EGroupDate.Sun,
       callback_data: JSON.stringify({
         event: EEvent.subscribeDate,
-        date: ESubDate.subSun,
+        date: EDate.Sun,
       }),
     },
   ],

@@ -1,11 +1,11 @@
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
-import { ESubDate, ESubTime, Translator } from '../types/groups.type';
+import { EDate, ETime, Translator } from '../types/date.type';
 import { EEvent } from '../types/query-data.type';
 import { UserDoc } from '../models/user.model';
 import { sortSubs } from '../helpers/sort-subs.helper';
 import { quitButton } from './quit.button';
 
-const unsubButton = (date: ESubDate, time: ESubTime) => ({
+const unsubButton = (date: EDate, time: ETime) => ({
   text: `${Translator[date]} | ${Translator[time]}`,
   callback_data: JSON.stringify({
     event: EEvent.unsubscribeTime,

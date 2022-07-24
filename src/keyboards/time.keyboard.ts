@@ -1,15 +1,15 @@
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
-import { EGroupTime, ESubDate, ESubTime } from '../types/groups.type';
+import { EDate, EGroupTime, ETime } from '../types/date.type';
 import { EEvent } from '../types/query-data.type';
 import { quitButton } from './quit.button';
 
-export const timeWorkdayKeyboard = (chosenDate: ESubDate) => [
+export const timeWorkdayKeyboard = (chosenDate: EDate) => [
   [
     {
       text: EGroupTime.Morning,
       callback_data: JSON.stringify({
         event: EEvent.subscribeTime,
-        time: ESubTime.subMrn,
+        time: ETime.Mrn,
         date: chosenDate,
       }),
     },
@@ -19,7 +19,7 @@ export const timeWorkdayKeyboard = (chosenDate: ESubDate) => [
       text: EGroupTime.Afternoon,
       callback_data: JSON.stringify({
         event: EEvent.subscribeTime,
-        time: ESubTime.subAft,
+        time: ETime.Aft,
         date: chosenDate,
       }),
     },
@@ -29,7 +29,7 @@ export const timeWorkdayKeyboard = (chosenDate: ESubDate) => [
       text: EGroupTime.Evening,
       callback_data: JSON.stringify({
         event: EEvent.subscribeTime,
-        time: ESubTime.subEvn,
+        time: ETime.Evn,
         date: chosenDate,
       }),
     },
@@ -37,15 +37,13 @@ export const timeWorkdayKeyboard = (chosenDate: ESubDate) => [
   quitButton,
 ];
 
-export const timeWeekendKeyboard = (
-  date: ESubDate,
-): InlineKeyboardButton[][] => [
+export const timeWeekendKeyboard = (date: EDate): InlineKeyboardButton[][] => [
   [
     {
       text: EGroupTime.WholeDay,
       callback_data: JSON.stringify({
         event: EEvent.subscribeTime,
-        time: ESubTime.subWhl,
+        time: ETime.Whl,
         date,
       }),
     },

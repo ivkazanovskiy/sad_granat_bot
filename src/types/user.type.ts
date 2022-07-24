@@ -1,4 +1,4 @@
-import { ESubDate, ESubTime } from './groups.type';
+import { EDate, ETime } from './date.type';
 
 export enum ERole {
   user = 'user',
@@ -7,6 +7,7 @@ export enum ERole {
 
 export type TUser = {
   tlgId: number;
-  subs: { date: ESubDate; time: ESubTime }[];
+  isAuthorized: boolean;
+  subs: { date: EDate; time: ETime }[];
   role: ERole;
 };

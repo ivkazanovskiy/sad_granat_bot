@@ -1,16 +1,16 @@
 import mongoose, { Document, Types } from 'mongoose';
-import { ESubDate, ESubTime } from '../types/groups.type';
+import { EDate, ETime } from '../types/date.type';
 import { ERole, TUser } from '../types/user.type';
 
 const subsSchema = new mongoose.Schema(
   {
     date: {
       type: String,
-      enum: ESubDate,
+      enum: EDate,
     },
     time: {
       type: String,
-      enum: ESubTime,
+      enum: ETime,
     },
   },
   { _id: false },
@@ -18,10 +18,12 @@ const subsSchema = new mongoose.Schema(
 
 const userSchema = new mongoose.Schema<TUser>({
   tlgId: String,
+  isAuthorized: { type: Boolean, default: false },
   subs: [subsSchema],
   role: {
     type: String,
     enum: ERole,
+    default: ERole.user,
   },
 });
 
