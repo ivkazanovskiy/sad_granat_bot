@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import mongoose from 'mongoose';
 import TelegramBot from 'node-telegram-bot-api';
 import { callbackAuthorize } from './functions/authorize.func';
 import { callbackMessage } from './functions/message.func';
@@ -24,8 +23,6 @@ export const notifyCache = new Map<
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, { polling: true });
 
 export async function telegram() {
-  await mongoose.connect(process.env.MONGO_URI!);
-
   // await bot.setMyCommands(defaultCommands, { scope: { type: 'default' } });
 
   bot.onText(new RegExp(ECommand.start), callbackStart(bot));
