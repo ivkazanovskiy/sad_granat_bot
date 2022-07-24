@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import TelegramBot from 'node-telegram-bot-api';
-import { notifyCache } from '..';
+import { notifyCache } from '../telegram';
 import { userCommands } from '../commands';
 import { notifyGroupKeyboard } from '../keyboards/notify.keyboard';
 import { scheduleKeyboard } from '../keyboards/schedule.keyboard';
@@ -53,7 +53,10 @@ export const callbackQuery =
       try {
         const user = await User.findOne({ tlgId: query.from.id });
         if (!user) {
-          return bot.sendMessage(query.from.id, 'Сначала зарегистрируйтесь');
+          return await bot.sendMessage(
+            query.from.id,
+            'Сначала зарегистрируйтесь',
+          );
         }
 
         const prevSubscription = user.subs.find(
@@ -88,7 +91,10 @@ export const callbackQuery =
       try {
         const user = await User.findOne({ tlgId: query.from.id });
         if (!user) {
-          return bot.sendMessage(query.from.id, 'Сначала зарегистрируйтесь');
+          return await bot.sendMessage(
+            query.from.id,
+            'Сначала зарегистрируйтесь',
+          );
         }
         user.subs = user.subs.filter(
           (sub) => !(sub.date === data.date && sub.time === data.time),
@@ -105,7 +111,7 @@ export const callbackQuery =
             query.from.id,
             `У вас нет активных подписок.\nПодписаться на оповещения можно по команде ${ECommand.subscribe}`,
           );
-          return bot.answerCallbackQuery(query.id);
+          return await bot.answerCallbackQuery(query.id);
         }
 
         await bot.editMessageReplyMarkup(
@@ -145,7 +151,7 @@ export const callbackQuery =
 
         const user = await User.findOne({ tlgId: data.tlgId });
         if (!user) {
-          return bot.sendMessage(
+          return await bot.sendMessage(
             query.from.id,
             'Данного пользователя не существует.',
           );
@@ -165,7 +171,7 @@ export const callbackQuery =
           'Теперь вы авторизованны администратором.',
         );
         await bot.answerCallbackQuery(query.id);
-        return bot.sendMessage(
+        return await bot.sendMessage(
           query.from.id,
           `Пользователь ${user.tlgId} авторизован.`,
         );
@@ -182,7 +188,7 @@ export const callbackQuery =
       try {
         const text = notifyCache.get(query.message.chat.id)?.text;
         if (!text) {
-          return bot.sendMessage(
+          return await bot.sendMessage(
             query.message.chat.id,
             'Текст сообщения отсутствует.',
           );
