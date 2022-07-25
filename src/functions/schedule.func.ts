@@ -1,19 +1,21 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { db } from '../database/database';
+import { errorHandler } from '../error/handler.error';
 import { sortSubs } from '../helpers/sort-subs.helper';
 import { Translator } from '../types/date.type';
 
 export const callbackSchedule =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
-    try {
-      const user = db.getUser(msg.chat.id);
-      if (!user) {
-        return await bot.sendMessage(
+    const user = db.getUser(msg.chat.id);
+    if (!user) {
+      return bot
+        .sendMessage(
           msg.chat.id,
           'Сначала отправьте запрос на использование бота с помощью команды\n/start',
-        );
-      }
-
+        )
+        .catch((e) => console.log(e.message));
+    }
+    try {
       if (!user.isAuthorized) {
         return await bot.sendMessage(
           msg.chat.id,
@@ -38,8 +40,7 @@ export const callbackSchedule =
           .map((sub) => `${Translator[sub.date]} | ${Translator[sub.time]}`)
           .join('\n'),
       );
-    } catch (e: any) {
-      console.log(e.message);
-      bot.sendMessage(msg.chat.id, 'Проблемы с подключением к базе данных.');
+    } catch (err) {
+      await errorHandler({ bot, user, data: msg, err });
     }
   };
