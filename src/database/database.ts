@@ -10,11 +10,11 @@ class DB {
   private path: string;
 
   constructor(private readonly name: string) {
-    this.path = path.join(__dirname, `${name}.json`);
+    this.path = path.join(__dirname, `../../${name}.json`);
   }
 
   initData = async () => {
-    const dir = await fs.readdir(__dirname);
+    const dir = await fs.readdir(path.join(__dirname, '../../'));
     if (!dir.includes(`${this.name}.json`)) {
       return this.storeData();
     }
@@ -66,15 +66,18 @@ class DB {
   };
 
   getUsersByTime = ({
-    date,
-    time,
+    admin,
+    data: { date, time },
   }: {
-    date: EDate;
-    time: ETime;
+    admin: TUserJson;
+    data: { date: EDate; time: ETime };
   }): TUserJson[] => {
     const pack: TUserJson[] = [];
     Object.values(this.data).forEach((user) => {
-      if (user.subs.some((sub) => sub.date === date && sub.time === time)) {
+      if (
+        user.subs.some((sub) => sub.date === date && sub.time === time) &&
+        user.tlgId !== admin.tlgId
+      ) {
         pack.push(user);
       }
     });

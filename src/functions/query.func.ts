@@ -9,7 +9,7 @@ import {
   timeWorkdayKeyboard,
 } from '../keyboards/time.keyboard';
 import { ECommand } from '../types/comands.type';
-import { EDate } from '../types/date.type';
+import { EDate, Translator } from '../types/date.type';
 import { EEvent, TQueryData } from '../types/query-data.type';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
@@ -123,8 +123,10 @@ export const callbackQuery =
           String(query.message.message_id),
         );
 
-        user.isAuthorized = true;
-        await db.saveUser(user);
+        if (!(await db.authorizeUser(data.tlgId))) {
+          return bot.sendMessage(query.from.id, 'Пользователь не найден.');
+        }
+
         await bot.setMyCommands(userCommands, {
           scope: {
             type: 'chat',
@@ -190,7 +192,7 @@ export const callbackQuery =
           );
         }
 
-        const users = db.getUsersByTime(data);
+        const users = db.getUsersByTime({ admin: user, data });
 
         // delete message before showing result
         await bot.deleteMessage(
@@ -210,7 +212,12 @@ export const callbackQuery =
           users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
         );
 
-        await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
+        await bot.sendMessage(
+          query.message.chat.id,
+          `Сообщения отправлены группе:\n${Translator[data.date]} | ${
+            Translator[data.time]
+          }`,
+        );
         await bot.answerCallbackQuery(query.id);
       }
     } catch (err) {

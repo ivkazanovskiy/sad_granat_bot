@@ -21,6 +21,6 @@ export const callbackDump =
     }
 
     bot
-      .sendDocument(msg.chat.id, path.join(__dirname, '../database/users.json'))
+      .sendDocument(msg.chat.id, path.join(__dirname, '../../users.json'))
       .catch((e) => console.log(e.message));
   };
