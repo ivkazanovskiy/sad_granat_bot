@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && npx tsc --build",
     "start": "npm run build && node ./dist/index.js",
-    "dev": "npx nodemon ./src/index.ts"
+    "dev": "npx nodemon ./src/index.ts --ignore ./src/database/users.json"
   },
   "keywords": [],
   "author": "",

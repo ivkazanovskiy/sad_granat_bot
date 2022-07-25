@@ -1,0 +1,26 @@
+{
+  "123": {
+    "tlgId": 123,
+    "isAuthorized": true,
+    "subs": [],
+    "role": "admin"
+  },
+  "567": {
+    "tlgId": 567,
+    "isAuthorized": false,
+    "role": "user",
+    "subs": []
+  },
+  "568": {
+    "tlgId": 568,
+    "isAuthorized": false,
+    "role": "user",
+    "subs": []
+  },
+  "569": {
+    "tlgId": 569,
+    "isAuthorized": true,
+    "role": "admin",
+    "subs": []
+  }
+}
