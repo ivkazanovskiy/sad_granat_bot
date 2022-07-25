@@ -12,6 +12,7 @@ import { ECommand } from '../types/comands.type';
 import { EDate } from '../types/date.type';
 import { EEvent, TQueryData } from '../types/query-data.type';
 import { db } from '../database/database';
+import { errorHandler } from '../error/handler.error';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
@@ -20,15 +21,29 @@ export const callbackQuery =
     if (!user) {
       return bot.sendMessage(query.from.id, 'Сначала зарегистрируйтесь');
     }
+    try {
+      const data: TQueryData = JSON.parse(query.data);
 
-    const data: TQueryData = JSON.parse(query.data);
+      if (data.event === EEvent.subscribeDate) {
+        if ([EDate.Mon, EDate.Tue].includes(data.date)) {
+          // case of workday schedule
+          await bot.editMessageReplyMarkup(
+            {
+              inline_keyboard: timeWorkdayKeyboard(data.date),
+            },
+            {
+              message_id: query.message.message_id,
+              chat_id: query.message.chat.id,
+            },
+          );
 
-    if (data.event === EEvent.subscribeDate) {
-      if ([EDate.Mon, EDate.Tue].includes(data.date)) {
-        // case of workday schedule
+          return bot.answerCallbackQuery(query.id);
+        }
+
+        // case of weekend schedule
         await bot.editMessageReplyMarkup(
           {
-            inline_keyboard: timeWorkdayKeyboard(data.date),
+            inline_keyboard: timeWeekendKeyboard(data.date),
           },
           {
             message_id: query.message.message_id,
@@ -39,22 +54,7 @@ export const callbackQuery =
         return bot.answerCallbackQuery(query.id);
       }
 
-      // case of weekend schedule
-      await bot.editMessageReplyMarkup(
-        {
-          inline_keyboard: timeWeekendKeyboard(data.date),
-        },
-        {
-          message_id: query.message.message_id,
-          chat_id: query.message.chat.id,
-        },
-      );
-
-      return bot.answerCallbackQuery(query.id);
-    }
-
-    if (data.event === EEvent.subscribeTime) {
-      try {
+      if (data.event === EEvent.subscribeTime) {
         const prevSubscription = user.subs.find(
           (sub) => sub.date === data.date && sub.time === data.time,
         );
@@ -62,29 +62,22 @@ export const callbackQuery =
           user.subs.push({ date: data.date, time: data.time });
           await db.saveUser(user);
         }
-      } catch (e: any) {
-        console.log(e.message);
+
+        await bot.answerCallbackQuery(query.id);
+
+        // delete message before showing result
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+
         return bot.sendMessage(
-          query.from.id,
-          'Проблемы с подключением к базе данных.',
+          query.message.chat.id,
+          `Вы успешно подписались на рассылку.\nСписок всех подписок доступен по команде ${ECommand.schedule}`,
         );
       }
-      await bot.answerCallbackQuery(query.id);
 
-      // delete message before showing result
-      await bot.deleteMessage(
-        query.message.chat.id,
-        String(query.message.message_id),
-      );
-
-      return bot.sendMessage(
-        query.message.chat.id,
-        `Вы успешно подписались на рассылку.\nСписок всех подписок доступен по команде ${ECommand.schedule}`,
-      );
-    }
-
-    if (data.event === EEvent.unsubscribeTime) {
-      try {
+      if (data.event === EEvent.unsubscribeTime) {
         user.subs = user.subs.filter(
           (sub) => !(sub.date === data.date && sub.time === data.time),
         );
@@ -113,25 +106,17 @@ export const callbackQuery =
           },
         );
         await bot.answerCallbackQuery(query.id);
-      } catch (e: any) {
-        console.log(e.message);
-        return bot.sendMessage(
-          query.from.id,
-          'Проблемы с подключением к базе данных.',
-        );
       }
-    }
 
-    if (data.event === EEvent.quit) {
-      await bot.deleteMessage(
-        query.message.chat.id,
-        String(query.message.message_id),
-      );
-      await bot.answerCallbackQuery(query.id);
-    }
+      if (data.event === EEvent.quit) {
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+        await bot.answerCallbackQuery(query.id);
+      }
 
-    if (data.event === EEvent.auth) {
-      try {
+      if (data.event === EEvent.auth) {
         // delete message before showing result
         await bot.deleteMessage(
           query.message.chat.id,
@@ -151,25 +136,18 @@ export const callbackQuery =
           data.tlgId,
           'Теперь вы авторизованны администратором.',
         );
+
         await bot.answerCallbackQuery(query.id);
-        return await bot.sendMessage(
+        return bot.sendMessage(
           query.from.id,
           `Пользователь ${user.tlgId} авторизован.`,
         );
-      } catch (e: any) {
-        console.log(e.message);
-        return bot.sendMessage(
-          query.from.id,
-          'Проблемы с подключением к базе данных.',
-        );
       }
-    }
 
-    if (data.event === EEvent.notifyAll) {
-      try {
+      if (data.event === EEvent.notifyAll) {
         const text = notifyCache.get(query.message.chat.id)?.text;
         if (!text) {
-          return await bot.sendMessage(
+          return bot.sendMessage(
             query.message.chat.id,
             'Текст сообщения отсутствует.',
           );
@@ -188,56 +166,54 @@ export const callbackQuery =
 
         await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
         await bot.answerCallbackQuery(query.id);
-      } catch (e: any) {
-        console.log(e.message);
-        return bot.sendMessage(
-          query.from.id,
-          'Проблемы с подключением к базе данных.',
-        );
       }
-    }
 
-    if (data.event === EEvent.notifyGroup) {
-      await bot.editMessageReplyMarkup(
-        {
-          inline_keyboard: notifyGroupKeyboard,
-        },
-        {
-          message_id: query.message.message_id,
-          chat_id: query.message.chat.id,
-        },
-      );
-      await bot.answerCallbackQuery(query.id);
-    }
+      if (data.event === EEvent.notifyGroup) {
+        await bot.editMessageReplyMarkup(
+          {
+            inline_keyboard: notifyGroupKeyboard,
+          },
+          {
+            message_id: query.message.message_id,
+            chat_id: query.message.chat.id,
+          },
+        );
+        await bot.answerCallbackQuery(query.id);
+      }
 
-    if (data.event === EEvent.notifyGroupTime) {
-      const text = notifyCache.get(query.message.chat.id)?.text;
-      if (!text) {
-        return bot.sendMessage(
+      if (data.event === EEvent.notifyGroupTime) {
+        const text = notifyCache.get(query.message.chat.id)?.text;
+        if (!text) {
+          return bot.sendMessage(
+            query.message.chat.id,
+            'Текст сообщения отсутствует.',
+          );
+        }
+
+        const users = db.getUsersByTime(data);
+
+        // delete message before showing result
+        await bot.deleteMessage(
           query.message.chat.id,
-          'Текст сообщения отсутствует.',
+          String(query.message.message_id),
         );
-      }
 
-      const users = db.getUsersByTime(data);
+        if (!users.length) {
+          await bot.sendMessage(
+            query.message.chat.id,
+            'На данную группу никто не подписан.',
+          );
+          return bot.answerCallbackQuery(query.id);
+        }
 
-      // delete message before showing result
-      await bot.deleteMessage(
-        query.message.chat.id,
-        String(query.message.message_id),
-      );
-
-      if (!users.length) {
-        await bot.sendMessage(
-          query.message.chat.id,
-          'На данную группу никто не подписан.',
+        await Promise.all(
+          users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
         );
-        return bot.answerCallbackQuery(query.id);
+
+        await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
+        await bot.answerCallbackQuery(query.id);
       }
-
-      await Promise.all(users.map(({ tlgId }) => bot.sendMessage(tlgId, text)));
-
-      await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
-      await bot.answerCallbackQuery(query.id);
+    } catch (err) {
+      await errorHandler({ bot, user, data: query, err });
     }
   };
