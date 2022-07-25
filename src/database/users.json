@@ -22,5 +22,20 @@
     "isAuthorized": true,
     "role": "admin",
     "subs": []
+  },
+  "369908047": {
+    "tlgId": 369908047,
+    "isAuthorized": true,
+    "role": "admin",
+    "subs": [
+      {
+        "date": "Sun",
+        "time": "Whl"
+      },
+      {
+        "date": "Mon",
+        "time": "Mrn"
+      }
+    ]
   }
 }

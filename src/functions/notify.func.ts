@@ -1,11 +1,11 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { User } from '../models/user.model';
+import { db } from '../database/database';
 import { notifyCache } from '../telegram';
 import { ERole } from '../types/user.type';
 
 export const callbackNotify =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
-    const user = await User.findOne({ tlgId: msg.chat.id });
+    const user = db.getUser(msg.chat.id);
     if (!user) {
       return bot.sendMessage(
         msg.chat.id,

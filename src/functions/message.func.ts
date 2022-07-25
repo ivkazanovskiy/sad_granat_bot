@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { adminCommands } from '../commands';
+import { db } from '../database/database';
 import { notifyKeyboard } from '../keyboards/notify.keyboard';
-import { User } from '../models/user.model';
 import { notifyCache } from '../telegram';
 import { ECommand } from '../types/comands.type';
 import { ERole } from '../types/user.type';
@@ -9,14 +9,11 @@ import { ERole } from '../types/user.type';
 export const callbackMessage =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     if (msg.text === 'I am an admin') {
-      const user = await User.findOne({ tlgId: msg.chat.id });
+      const user = db.getUser(msg.chat.id);
       if (!user) {
         return bot.sendMessage(msg.chat.id, `Нажмите ${ECommand.start}`);
       }
-
-      user.isAuthorized = true;
-      user.role = ERole.admin;
-      await user.save();
+      await db.setUserAsAdmin(user);
       await bot.setMyCommands(adminCommands, {
         scope: { type: 'chat', chat_id: msg.chat.id },
       });

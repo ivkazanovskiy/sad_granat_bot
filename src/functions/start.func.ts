@@ -1,12 +1,12 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { User } from '../models/user.model';
+import { db } from '../database/database';
 
 export const callbackStart =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     try {
-      const user = await User.findOne({ tlgId: msg.chat.id });
+      const user = db.getUser(msg.chat.id);
       if (!user) {
-        await User.create({ tlgId: msg.chat.id, username: msg.chat.username });
+        await db.addUser(msg.chat.id);
         await bot.sendMessage(
           msg.chat.id,
           'Вы добавленны в базу данных.\nПопросите администратора авторизовать ваш профиль:',

@@ -1,12 +1,12 @@
 import TelegramBot from 'node-telegram-bot-api';
+import { db } from '../database/database';
 import { sortSubs } from '../helpers/sort-subs.helper';
-import { User } from '../models/user.model';
 import { Translator } from '../types/date.type';
 
 export const callbackSchedule =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     try {
-      const user = await User.findOne({ tlgId: msg.chat.id });
+      const user = db.getUser(msg.chat.id);
       if (!user) {
         return await bot.sendMessage(
           msg.chat.id,

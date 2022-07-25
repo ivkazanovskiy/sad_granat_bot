@@ -8,14 +8,18 @@ import {
   timeWeekendKeyboard,
   timeWorkdayKeyboard,
 } from '../keyboards/time.keyboard';
-import { User } from '../models/user.model';
 import { ECommand } from '../types/comands.type';
 import { EDate } from '../types/date.type';
 import { EEvent, TQueryData } from '../types/query-data.type';
+import { db } from '../database/database';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
     if (!query.message || !query.data) return;
+    const user = db.getUser(query.from.id);
+    if (!user) {
+      return bot.sendMessage(query.from.id, 'Сначала зарегистрируйтесь');
+    }
 
     const data: TQueryData = JSON.parse(query.data);
 
@@ -51,20 +55,12 @@ export const callbackQuery =
 
     if (data.event === EEvent.subscribeTime) {
       try {
-        const user = await User.findOne({ tlgId: query.from.id });
-        if (!user) {
-          return await bot.sendMessage(
-            query.from.id,
-            'Сначала зарегистрируйтесь',
-          );
-        }
-
         const prevSubscription = user.subs.find(
           (sub) => sub.date === data.date && sub.time === data.time,
         );
         if (!prevSubscription) {
           user.subs.push({ date: data.date, time: data.time });
-          await user.save();
+          await db.saveUser(user);
         }
       } catch (e: any) {
         console.log(e.message);
@@ -89,17 +85,10 @@ export const callbackQuery =
 
     if (data.event === EEvent.unsubscribeTime) {
       try {
-        const user = await User.findOne({ tlgId: query.from.id });
-        if (!user) {
-          return await bot.sendMessage(
-            query.from.id,
-            'Сначала зарегистрируйтесь',
-          );
-        }
         user.subs = user.subs.filter(
           (sub) => !(sub.date === data.date && sub.time === data.time),
         );
-        await user.save();
+        await db.saveUser(user);
 
         if (!user.subs.length) {
           // delete message before showing result
@@ -149,16 +138,8 @@ export const callbackQuery =
           String(query.message.message_id),
         );
 
-        const user = await User.findOne({ tlgId: data.tlgId });
-        if (!user) {
-          return await bot.sendMessage(
-            query.from.id,
-            'Данного пользователя не существует.',
-          );
-        }
-
         user.isAuthorized = true;
-        await user.save();
+        await db.saveUser(user);
         await bot.setMyCommands(userCommands, {
           scope: {
             type: 'chat',
@@ -199,12 +180,10 @@ export const callbackQuery =
           String(query.message.message_id),
         );
 
-        const users = await User.find({
-          tlgId: { $ne: query.message.chat.id },
-        });
+        const users = db.getOtherUsers(user);
 
         await Promise.all(
-          users.map((user) => bot.sendMessage(user.tlgId, text)),
+          users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
         );
 
         await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
@@ -240,10 +219,7 @@ export const callbackQuery =
         );
       }
 
-      const users = await User.find({
-        tlgId: { $ne: query.message.chat.id },
-        subs: { $elemMatch: { date: data.date, time: data.time } },
-      });
+      const users = db.getUsersByTime(data);
 
       // delete message before showing result
       await bot.deleteMessage(
@@ -259,7 +235,7 @@ export const callbackQuery =
         return bot.answerCallbackQuery(query.id);
       }
 
-      await Promise.all(users.map((user) => bot.sendMessage(user.tlgId, text)));
+      await Promise.all(users.map(({ tlgId }) => bot.sendMessage(tlgId, text)));
 
       await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
       await bot.answerCallbackQuery(query.id);
