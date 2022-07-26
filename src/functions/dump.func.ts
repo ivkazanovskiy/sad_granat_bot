@@ -1,9 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
+import * as path from 'path';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
-import { dateKeyboard } from '../keyboards/date.keyboard';
+import { ERole } from '../types/user.type';
 
-export const callbackSubscribe =
+export const callbackDump =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     const user = db.getUser(msg.chat.id);
     if (!user) {
@@ -15,22 +16,16 @@ export const callbackSubscribe =
         .catch((e) => console.log(e.message));
     }
     try {
-      if (!user.isAuthorized) {
+      if (user.role !== ERole.admin) {
         return bot.sendMessage(
           msg.chat.id,
-          `Попросите администратора авторизовать ваш профиль: ${msg.chat.username}`,
+          'У вас нет прав администратора для выполнения данной команды.',
         );
       }
 
-      await bot.sendMessage(
-        msg.chat.id,
-        'Выберите дни на которые хотите подписаться',
-        {
-          reply_markup: {
-            inline_keyboard: dateKeyboard,
-          },
-        },
-      );
+      bot
+        .sendDocument(msg.chat.id, path.join(__dirname, '../../users.json'))
+        .catch((e) => console.log(e.message));
     } catch (err) {
       await errorHandler({ bot, user, data: msg, err });
     }

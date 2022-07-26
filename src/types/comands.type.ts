@@ -5,4 +5,7 @@ export enum ECommand {
   unsubscribe = '/unsubscribe',
   authorize = '/authorize',
   notify = '/notify',
+  dump = '/dump',
+  logs = '/logs',
+  drop = '/drop',
 }

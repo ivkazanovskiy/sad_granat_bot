@@ -1,8 +1,8 @@
-import { UserDoc } from '../models/user.model';
+import { TUserJson } from '../database/types/user.type';
 import { EEvent } from '../types/query-data.type';
 import { quitButton } from './quit.button';
 
-export const authKeyboard = (users: UserDoc[]) => [
+export const authKeyboard = (users: TUserJson[]) => [
   ...users.map((user) => [
     {
       text: user.tlgId.toString(),
