@@ -11,9 +11,12 @@ export const callbackMessage =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     const user = db.getUser(msg.chat.id);
     if (!user) {
-      return bot
-        .sendMessage(msg.chat.id, `Нажмите ${ECommand.start}`)
-        .catch((e) => console.log(e.message));
+      if (msg.text !== ECommand.start) {
+        return bot
+          .sendMessage(msg.chat.id, `Нажмите ${ECommand.start}`)
+          .catch((e) => console.log(e.message));
+      }
+      return;
     }
     try {
       if (msg.text === 'I am an admin') {
