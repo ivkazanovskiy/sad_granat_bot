@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import TelegramBot from 'node-telegram-bot-api';
+import { db } from './database/database';
 import { callbackAuthorize } from './functions/authorize.func';
 import { callbackDrop } from './functions/droplogs.funс';
 import { callbackDump } from './functions/dump.func';
@@ -26,27 +27,29 @@ export const notifyCache = new Map<
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, { polling: true });
 
 export async function telegram() {
-  // await bot.setMyCommands(defaultCommands, { scope: { type: 'default' } });
+  db.initData().then(() => {
+    // await bot.setMyCommands(defaultCommands, { scope: { type: 'default' } });
 
-  bot.onText(new RegExp(ECommand.start), callbackStart(bot));
+    bot.onText(new RegExp(ECommand.start), callbackStart(bot));
 
-  bot.onText(new RegExp(ECommand.subscribe), callbackSubscribe(bot));
+    bot.onText(new RegExp(ECommand.subscribe), callbackSubscribe(bot));
 
-  bot.onText(new RegExp(ECommand.unsubscribe), callbackUnsubscribe(bot));
+    bot.onText(new RegExp(ECommand.unsubscribe), callbackUnsubscribe(bot));
 
-  bot.onText(new RegExp(ECommand.schedule), callbackSchedule(bot));
+    bot.onText(new RegExp(ECommand.schedule), callbackSchedule(bot));
 
-  bot.onText(new RegExp(ECommand.authorize), callbackAuthorize(bot));
+    bot.onText(new RegExp(ECommand.authorize), callbackAuthorize(bot));
 
-  bot.onText(new RegExp(ECommand.notify), callbackNotify(bot));
+    bot.onText(new RegExp(ECommand.notify), callbackNotify(bot));
 
-  bot.onText(new RegExp(ECommand.dump), callbackDump(bot));
+    bot.onText(new RegExp(ECommand.dump), callbackDump(bot));
 
-  bot.onText(new RegExp(ECommand.logs), callbackLogs(bot));
+    bot.onText(new RegExp(ECommand.logs), callbackLogs(bot));
 
-  bot.onText(new RegExp(ECommand.drop), callbackDrop(bot));
+    bot.onText(new RegExp(ECommand.drop), callbackDrop(bot));
 
-  bot.on('callback_query', callbackQuery(bot));
+    bot.on('callback_query', callbackQuery(bot));
 
-  bot.on('message', callbackMessage(bot));
+    bot.on('message', callbackMessage(bot));
+  });
 }

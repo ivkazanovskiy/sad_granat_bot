@@ -10,11 +10,11 @@ class DB {
   private path: string;
 
   constructor(private readonly name: string) {
-    this.path = path.join(__dirname, `../../${name}.json`);
+    this.path = path.join(__dirname, `../../../${name}.json`);
   }
 
   initData = async () => {
-    const dir = await fs.readdir(path.join(__dirname, '../../'));
+    const dir = await fs.readdir(path.join(__dirname, '../../../'));
     if (!dir.includes(`${this.name}.json`)) {
       return this.storeData();
     }

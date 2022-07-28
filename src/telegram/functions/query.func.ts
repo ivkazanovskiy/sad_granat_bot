@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import TelegramBot from 'node-telegram-bot-api';
-import { notifyCache } from '../telegram';
+import { notifyCache } from '..';
 import { userCommands } from '../commands';
 import { notifyGroupKeyboard } from '../keyboards/notify.keyboard';
 import { scheduleKeyboard } from '../keyboards/schedule.keyboard';

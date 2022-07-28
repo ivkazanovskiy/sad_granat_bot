@@ -129,5 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# db data
+# data
 users.json
+counter.json

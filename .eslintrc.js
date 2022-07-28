@@ -11,6 +11,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
+    'class-methods-use-this': 'off',
     'object-curly-newline': 'off',
     'no-await-in-loop': 'off',
     'implicit-arrow-linebreak': 'off',

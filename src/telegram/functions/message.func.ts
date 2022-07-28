@@ -3,7 +3,7 @@ import { adminCommands } from '../commands';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
 import { notifyKeyboard } from '../keyboards/notify.keyboard';
-import { notifyCache } from '../telegram';
+import { notifyCache } from '..';
 import { ECommand } from '../types/comands.type';
 import { ERole } from '../types/user.type';
 
