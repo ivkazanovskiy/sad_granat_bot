@@ -6,5 +6,5 @@ import { telegram } from './telegram';
 
 config();
 
-// telegram();
-cron();
+telegram();
+// cron();

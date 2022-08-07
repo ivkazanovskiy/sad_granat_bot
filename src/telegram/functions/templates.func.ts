@@ -3,9 +3,10 @@ import TelegramBot from 'node-telegram-bot-api';
 import * as path from 'path';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
+import { templatesKeyboard } from '../keyboards/templates.keyboard';
 import { ERole } from '../types/user.type';
 
-export const callbackLogs =
+export const callbackTemplates =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     const user = db.getUser(msg.chat.id);
     if (!user) {
@@ -24,17 +25,22 @@ export const callbackLogs =
         );
       }
 
-      const dir = await fs.readdir(path.join(__dirname, '../../..'));
+      const dir = await fs.readdir(path.join(__dirname, '../../../templates'));
 
-      if (!dir.includes('logs.txt')) {
-        return bot
-          .sendMessage(msg.chat.id, 'Логи не найдены.')
-          .catch((e) => console.log(e.message));
+      for (let i = 1; i <= 12; i += 1) {
+        if (!dir.includes(`${i}.txt`)) {
+          await fs.writeFile(
+            path.join(__dirname, `../../../templates/${i}.txt`),
+            `Здесь должен быть текст ${i} сообщения`,
+          );
+        }
       }
 
-      bot
-        .sendDocument(msg.chat.id, path.join(__dirname, '../../../logs.txt'))
-        .catch((e) => console.log(e.message));
+      return bot.sendMessage(msg.chat.id, 'Выберите сообщение:', {
+        reply_markup: {
+          inline_keyboard: templatesKeyboard(),
+        },
+      });
     } catch (err) {
       await errorHandler({ bot, user, data: msg, err });
     }

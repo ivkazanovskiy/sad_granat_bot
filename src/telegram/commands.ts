@@ -31,4 +31,8 @@ export const adminCommands: BotCommand[] = [
     command: ECommand.notify,
     description: 'Оповестить пользователей',
   },
+  {
+    command: ECommand.templates,
+    description: 'Шаблоны сообщений',
+  },
 ];

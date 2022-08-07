@@ -11,6 +11,7 @@ import { callbackQuery } from './functions/query.func';
 import { callbackSchedule } from './functions/schedule.func';
 import { callbackStart } from './functions/start.func';
 import { callbackSubscribe } from './functions/subscribe.func';
+import { callbackTemplates } from './functions/templates.func';
 import { callbackUnsubscribe } from './functions/unsubscribe.func';
 import { ECommand } from './types/comands.type';
 
@@ -22,6 +23,13 @@ config();
 export const notifyCache = new Map<
   number,
   { message_id: number; text?: string }
+>();
+export const templateCache = new Map<
+  number,
+  {
+    templateIndex: number;
+    message_id: number;
+  }
 >();
 
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, { polling: true });
@@ -47,6 +55,8 @@ export async function telegram() {
     bot.onText(new RegExp(ECommand.logs), callbackLogs(bot));
 
     bot.onText(new RegExp(ECommand.drop), callbackDrop(bot));
+
+    bot.onText(new RegExp(ECommand.templates), callbackTemplates(bot));
 
     bot.on('callback_query', callbackQuery(bot));
 

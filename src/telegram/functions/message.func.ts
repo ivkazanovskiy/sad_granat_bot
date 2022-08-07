@@ -1,9 +1,11 @@
 import TelegramBot from 'node-telegram-bot-api';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { adminCommands } from '../commands';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
 import { notifyKeyboard } from '../keyboards/notify.keyboard';
-import { notifyCache } from '..';
+import { notifyCache, templateCache } from '..';
 import { ECommand } from '../types/comands.type';
 import { ERole } from '../types/user.type';
 
@@ -47,8 +49,30 @@ export const callbackMessage =
         });
       }
 
+      if (
+        msg.text &&
+        msg.text[0] !== '/' &&
+        templateCache.get(msg.chat.id)?.message_id === msg.message_id
+      ) {
+        const cacheData = templateCache.get(msg.chat.id);
+        if (!cacheData) return;
+        await fs.writeFile(
+          path.join(
+            __dirname,
+            `../../../templates/${cacheData.templateIndex}.txt`,
+          ),
+          msg.text,
+        );
+
+        return bot.sendMessage(
+          msg.chat.id,
+          `Изменения сохранены. Для работы с другими сообщения введите команду ${ECommand.templates}`,
+        );
+      }
+
       // clear the cache
       notifyCache.delete(msg.chat.id);
+      templateCache.delete(msg.chat.id);
     } catch (err) {
       await errorHandler({ bot, user, data: msg, err });
     }

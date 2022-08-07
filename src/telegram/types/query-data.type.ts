@@ -9,6 +9,9 @@ export enum EEvent {
   'notifyAll' = 'notAll',
   'notifyGroup' = 'notGroup',
   'notifyGroupTime' = 'notGrTm',
+  'templates' = 'tmp',
+  'openTemplate' = 'opTmp',
+  'editTemplate' = 'edTmp',
 }
 
 export type TQueryData =
@@ -43,4 +46,16 @@ export type TQueryData =
       event: EEvent.notifyGroupTime;
       time: ETime;
       date: EDate;
+    }
+  | {
+      event: EEvent.templates;
+      i: number;
+    }
+  | {
+      event: EEvent.openTemplate;
+      i: number;
+    }
+  | {
+      event: EEvent.editTemplate;
+      i: number;
     };

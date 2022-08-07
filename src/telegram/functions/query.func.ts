@@ -1,6 +1,8 @@
 /* eslint-disable indent */
 import TelegramBot from 'node-telegram-bot-api';
-import { notifyCache } from '..';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { notifyCache, templateCache } from '..';
 import { userCommands } from '../commands';
 import { notifyGroupKeyboard } from '../keyboards/notify.keyboard';
 import { scheduleKeyboard } from '../keyboards/schedule.keyboard';
@@ -13,6 +15,7 @@ import { EDate, Translator } from '../types/date.type';
 import { EEvent, TQueryData } from '../types/query-data.type';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
+import { templateOptionsKeyboard } from '../keyboards/templates.keyboard';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
@@ -63,18 +66,17 @@ export const callbackQuery =
           await db.saveUser(user);
         }
 
-        await bot.answerCallbackQuery(query.id);
-
         // delete message before showing result
         await bot.deleteMessage(
           query.message.chat.id,
           String(query.message.message_id),
         );
 
-        return bot.sendMessage(
+        await bot.sendMessage(
           query.message.chat.id,
           `Вы успешно подписались на рассылку.\nСписок всех подписок доступен по команде ${ECommand.schedule}`,
         );
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.unsubscribeTime) {
@@ -105,7 +107,7 @@ export const callbackQuery =
             chat_id: query.message.chat.id,
           },
         );
-        await bot.answerCallbackQuery(query.id);
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.quit) {
@@ -113,7 +115,7 @@ export const callbackQuery =
           query.message.chat.id,
           String(query.message.message_id),
         );
-        await bot.answerCallbackQuery(query.id);
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.auth) {
@@ -139,11 +141,11 @@ export const callbackQuery =
           'Теперь вы авторизованны администратором.',
         );
 
-        await bot.answerCallbackQuery(query.id);
-        return bot.sendMessage(
+        await bot.sendMessage(
           query.from.id,
-          `Пользователь ${user.tlgId} авторизован.`,
+          `Пользователь ${data.tlgId} авторизован.`,
         );
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.notifyAll) {
@@ -167,7 +169,7 @@ export const callbackQuery =
         );
 
         await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
-        await bot.answerCallbackQuery(query.id);
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.notifyGroup) {
@@ -180,7 +182,7 @@ export const callbackQuery =
             chat_id: query.message.chat.id,
           },
         );
-        await bot.answerCallbackQuery(query.id);
+        return bot.answerCallbackQuery(query.id);
       }
 
       if (data.event === EEvent.notifyGroupTime) {
@@ -218,7 +220,54 @@ export const callbackQuery =
             Translator[data.time]
           }`,
         );
-        await bot.answerCallbackQuery(query.id);
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.templates) {
+        await bot.editMessageReplyMarkup(
+          {
+            inline_keyboard: templateOptionsKeyboard(data.i),
+          },
+          {
+            message_id: query.message.message_id,
+            chat_id: query.message.chat.id,
+          },
+        );
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.openTemplate) {
+        // delete message before showing result
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+
+        const template = await fs.readFile(
+          path.join(__dirname, `../../../templates/${data.i}.txt`),
+          'utf8',
+        );
+        await bot.sendMessage(query.message.chat.id, template);
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.editTemplate) {
+        // delete message before showing result
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+
+        templateCache.set(query.message.chat.id, {
+          templateIndex: data.i,
+          message_id: query.message.message_id + 2,
+        });
+
+        await bot.sendMessage(
+          query.message.chat.id,
+          'Введите текст сообщения:',
+        );
+        return bot.answerCallbackQuery(query.id);
       }
     } catch (err) {
       await errorHandler({ bot, user, data: query, err });

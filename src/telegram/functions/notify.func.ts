@@ -23,7 +23,7 @@ export const callbackNotify =
         );
       }
       notifyCache.set(msg.chat.id, { message_id: msg.message_id + 2 });
-      return bot.sendMessage(msg.chat.id, 'Введите текст сообщения');
+      return bot.sendMessage(msg.chat.id, 'Введите текст сообщения:');
     } catch (err) {
       await errorHandler({ bot, user, data: msg, err });
     }
