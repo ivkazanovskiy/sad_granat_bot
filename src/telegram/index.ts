@@ -38,7 +38,7 @@ export const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, {
 
 export async function telegram() {
   db.initData().then(async () => {
-    await bot.setMyCommands(userCommands);
+    // await bot.setMyCommands(userCommands);
 
     bot.onText(new RegExp(ECommand.start), callbackStart(bot));
 

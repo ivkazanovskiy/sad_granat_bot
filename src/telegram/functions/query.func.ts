@@ -16,6 +16,7 @@ import { templateOptionsKeyboard } from '../keyboards/templates.keyboard';
 import { weeksKeyboard } from '../keyboards/week.keyboard';
 import { Counter } from '../../cron/counter/Counter';
 import { Template } from '../../cron/template/Template';
+import { groupLabel } from '../helpers/group-label.helper';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
@@ -158,7 +159,13 @@ export const callbackQuery =
         const users = db.getOtherUsers(user);
 
         await Promise.all(
-          users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
+          users.map(({ tlgId }) =>
+            bot.sendMessage(
+              tlgId,
+              `*Сообщение для всех пользователей:*\n${text}`,
+              { parse_mode: 'Markdown' },
+            ),
+          ),
         );
 
         await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены');
@@ -204,7 +211,16 @@ export const callbackQuery =
         }
 
         await Promise.all(
-          users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
+          users.map(({ tlgId }) =>
+            bot.sendMessage(
+              tlgId,
+              `*Сообщение для группы\n${groupLabel(
+                data.date,
+                data.time,
+              )}:*\n${text}`,
+              { parse_mode: 'Markdown' },
+            ),
+          ),
         );
 
         await bot.sendMessage(

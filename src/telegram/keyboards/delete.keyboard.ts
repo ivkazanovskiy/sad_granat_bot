@@ -4,7 +4,7 @@ import { quitButton } from './quit.button';
 export const deleteKeyboard = [
   [
     {
-      text: 'Удалить профиль и отписаться от всех уведомлений',
+      text: 'Удалить профиль и отписаться',
       callback_data: JSON.stringify({
         event: EEvent.delete,
       }),
