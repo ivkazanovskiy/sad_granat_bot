@@ -20,7 +20,7 @@ export const callbackLogs =
       if (user.role !== ERole.admin) {
         return bot.sendMessage(
           msg.chat.id,
-          'У вас нет прав администратора для выполнения данной команды.',
+          'У вас нет прав администратора для выполнения данной команды',
         );
       }
 
@@ -28,7 +28,7 @@ export const callbackLogs =
 
       if (!dir.includes('logs.txt')) {
         return bot
-          .sendMessage(msg.chat.id, 'Логи не найдены.')
+          .sendMessage(msg.chat.id, 'Логи не найдены')
           .catch((e) => console.log(e.message));
       }
 

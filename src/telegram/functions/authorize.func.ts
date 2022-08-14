@@ -12,7 +12,7 @@ export const callbackAuthorize =
       return bot
         .sendMessage(
           msg.chat.id,
-          'У вас нет прав администратора для выполнения данной команды.',
+          'У вас нет прав администратора для выполнения данной команды',
         )
         .catch((e) => console.log(e.message));
     }
@@ -20,7 +20,7 @@ export const callbackAuthorize =
       const requests = db.getUnauthorizedUsers();
 
       if (!requests.length) {
-        return bot.sendMessage(msg.chat.id, 'Входящие заявки отсутствуют.');
+        return bot.sendMessage(msg.chat.id, 'Входящие заявки отсутствуют');
       }
       await bot.sendMessage(msg.chat.id, 'Авторизировать пользователей:', {
         reply_markup: {

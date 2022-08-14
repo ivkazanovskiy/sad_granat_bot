@@ -14,6 +14,7 @@ export enum EEvent {
   'editTemplate' = 'edTmp',
   'editWeek' = 'edWk',
   'setWeek' = 'stWk',
+  'delete' = 'del',
 }
 
 export type TQueryData =
@@ -67,4 +68,7 @@ export type TQueryData =
   | {
       event: EEvent.setWeek;
       i: number;
+    }
+  | {
+      event: EEvent.delete;
     };

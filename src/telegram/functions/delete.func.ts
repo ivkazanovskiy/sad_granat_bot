@@ -1,12 +1,9 @@
-import * as fs from 'fs/promises';
 import TelegramBot from 'node-telegram-bot-api';
-import * as path from 'path';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
-import { templatesKeyboard } from '../keyboards/templates.keyboard';
-import { ERole } from '../types/user.type';
+import { deleteKeyboard } from '../keyboards/delete.keyboard';
 
-export const callbackTemplates =
+export const callbackDelete =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
     const user = db.getUser(msg.chat.id);
     if (!user) {
@@ -18,16 +15,9 @@ export const callbackTemplates =
         .catch((e) => console.log(e.message));
     }
     try {
-      if (user.role !== ERole.admin) {
-        return bot.sendMessage(
-          msg.chat.id,
-          'У вас нет прав администратора для выполнения данной команды',
-        );
-      }
-
-      return bot.sendMessage(msg.chat.id, 'Выберите сообщение:', {
+      return bot.sendMessage(msg.chat.id, 'Выберите действие:', {
         reply_markup: {
-          inline_keyboard: templatesKeyboard(),
+          inline_keyboard: deleteKeyboard,
         },
       });
     } catch (err) {

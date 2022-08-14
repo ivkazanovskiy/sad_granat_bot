@@ -104,6 +104,11 @@ class DB {
     await this.saveUser(user);
     return user;
   };
+
+  deleteUser = async (user: TUserJson): Promise<void> => {
+    delete this.data[user.tlgId];
+    await this.storeData();
+  };
 }
 
 export const db = new DB('users');

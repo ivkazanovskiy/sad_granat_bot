@@ -5,7 +5,7 @@ export const userCommands: BotCommand[] = [
   { command: ECommand.start, description: 'Начать пользоваться чатботом' },
   {
     command: ECommand.schedule,
-    description: 'Посмотреть свои подписки.',
+    description: 'Посмотреть свои подписки',
   },
   {
     command: ECommand.subscribe,
@@ -14,6 +14,10 @@ export const userCommands: BotCommand[] = [
   {
     command: ECommand.unsubscribe,
     description: 'Отписаться от рассылки уведомлений',
+  },
+  {
+    command: ECommand.delete,
+    description: 'Удалить профиль и отписаться от всех уведомлений',
   },
   {
     command: ECommand.authorize,

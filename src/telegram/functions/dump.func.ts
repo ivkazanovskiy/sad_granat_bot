@@ -19,7 +19,7 @@ export const callbackDump =
       if (user.role !== ERole.admin) {
         return bot.sendMessage(
           msg.chat.id,
-          'У вас нет прав администратора для выполнения данной команды.',
+          'У вас нет прав администратора для выполнения данной команды',
         );
       }
 

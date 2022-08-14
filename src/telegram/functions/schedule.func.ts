@@ -26,7 +26,7 @@ export const callbackSchedule =
       if (!user.subs.length) {
         return await bot.sendMessage(
           msg.chat.id,
-          'У вас нет активных подписок.',
+          'У вас нет активных подписок',
         );
       }
 

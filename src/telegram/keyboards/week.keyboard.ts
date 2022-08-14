@@ -23,7 +23,7 @@ const weekButton = (i: number): InlineKeyboardButton => ({
 });
 
 const weekPauseButton: InlineKeyboardButton = {
-  text: 'Поставить на паузу.',
+  text: 'Поставить на паузу',
   callback_data: JSON.stringify({
     event: EEvent.setWeek,
     i: 0,

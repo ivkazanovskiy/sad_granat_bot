@@ -126,17 +126,17 @@ export const callbackQuery =
         );
 
         if (!(await db.authorizeUser(data.tlgId))) {
-          return bot.sendMessage(query.from.id, 'Пользователь не найден.');
+          return bot.sendMessage(query.from.id, 'Пользователь не найден');
         }
 
         await bot.sendMessage(
           data.tlgId,
-          'Теперь вы авторизованны администратором.',
+          'Теперь вы авторизованны администратором',
         );
 
         await bot.sendMessage(
           query.from.id,
-          `Пользователь ${data.tlgId} авторизован.`,
+          `Пользователь ${data.tlgId} авторизован`,
         );
         return bot.answerCallbackQuery(query.id);
       }
@@ -146,7 +146,7 @@ export const callbackQuery =
         if (!text) {
           return bot.sendMessage(
             query.message.chat.id,
-            'Текст сообщения отсутствует.',
+            'Текст сообщения отсутствует',
           );
         }
         // delete message before showing result
@@ -161,7 +161,7 @@ export const callbackQuery =
           users.map(({ tlgId }) => bot.sendMessage(tlgId, text)),
         );
 
-        await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены.');
+        await bot.sendMessage(query.message.chat.id, 'Сообщения отправлены');
         return bot.answerCallbackQuery(query.id);
       }
 
@@ -183,7 +183,7 @@ export const callbackQuery =
         if (!text) {
           return bot.sendMessage(
             query.message.chat.id,
-            'Текст сообщения отсутствует.',
+            'Текст сообщения отсутствует',
           );
         }
 
@@ -198,7 +198,7 @@ export const callbackQuery =
         if (!users.length) {
           await bot.sendMessage(
             query.message.chat.id,
-            'На данную группу никто не подписан.',
+            'На данную группу никто не подписан',
           );
           return bot.answerCallbackQuery(query.id);
         }
@@ -284,9 +284,23 @@ export const callbackQuery =
 
         const message = data.i
           ? `Задан номер текущей недели: №${data.i}`
-          : 'Отправка уведомлений приостановлена.';
+          : 'Отправка уведомлений приостановлена';
 
         await bot.sendMessage(query.message.chat.id, message);
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.delete) {
+        // delete message before showing result
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+        await db.deleteUser(user);
+        await bot.sendMessage(
+          query.message.chat.id,
+          `Ваш профиль был удален.\nДля использования сервиса нажмите ${ECommand.start}`,
+        );
         return bot.answerCallbackQuery(query.id);
       }
     } catch (err) {

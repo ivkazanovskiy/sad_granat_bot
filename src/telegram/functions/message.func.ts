@@ -22,7 +22,7 @@ export const callbackMessage =
         await db.setUserAsAdmin(user);
         return bot.sendMessage(
           msg.chat.id,
-          'Теперь вы администратор. Для обновления списка команд перезапустите приложение.',
+          'Теперь вы администратор. Для обновления списка команд перезапустите приложение',
         );
       }
 

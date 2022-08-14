@@ -2,6 +2,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { userCommands } from './commands';
 import { db } from './database/database';
 import { callbackAuthorize } from './functions/authorize.func';
+import { callbackDelete } from './functions/delete.func';
 import { callbackDrop } from './functions/droplogs.funс';
 import { callbackDump } from './functions/dump.func';
 import { callbackLogs } from './functions/logs.func';
@@ -60,6 +61,8 @@ export async function telegram() {
     bot.onText(new RegExp(ECommand.templates), callbackTemplates(bot));
 
     bot.onText(new RegExp(ECommand.week), callbackWeek(bot));
+
+    bot.onText(new RegExp(ECommand.delete), callbackDelete(bot));
 
     bot.on('callback_query', callbackQuery(bot));
 

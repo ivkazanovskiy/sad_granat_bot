@@ -19,7 +19,7 @@ export const callbackNotify =
       if (user.role !== ERole.admin) {
         return bot.sendMessage(
           msg.chat.id,
-          'У вас нет прав администратора для выполнения данной команды.',
+          'У вас нет прав администратора для выполнения данной команды',
         );
       }
       notifyCache.set(msg.chat.id, { message_id: msg.message_id + 2 });

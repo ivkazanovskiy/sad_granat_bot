@@ -24,7 +24,7 @@ export const callbackUnsubscribe =
       }
 
       if (!user.subs.length) {
-        return bot.sendMessage(msg.chat.id, 'У вас нет активных подписок.');
+        return bot.sendMessage(msg.chat.id, 'У вас нет активных подписок');
       }
 
       await bot.sendMessage(

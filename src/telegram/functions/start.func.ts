@@ -21,7 +21,7 @@ export const callbackStart =
       if (user.isAuthorized) {
         return await bot.sendMessage(
           msg.chat.id,
-          'Вы авторизованый пользователь. Можете использовать все команды доступные в меню.',
+          'Вы авторизованый пользователь.\nМожете использовать все команды доступные в меню',
         );
       }
 
