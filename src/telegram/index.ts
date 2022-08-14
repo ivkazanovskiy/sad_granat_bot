@@ -1,4 +1,3 @@
-import { config } from 'dotenv';
 import TelegramBot from 'node-telegram-bot-api';
 import { db } from './database/database';
 import { callbackAuthorize } from './functions/authorize.func';
@@ -16,8 +15,6 @@ import { callbackUnsubscribe } from './functions/unsubscribe.func';
 import { callbackWeek } from './functions/week.func';
 import { ECommand } from './types/comands.type';
 
-config();
-
 /**
  * chat_id : expected message_id
  */
@@ -33,7 +30,9 @@ export const templateCache = new Map<
   }
 >();
 
-const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, { polling: true });
+export const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, {
+  polling: true,
+});
 
 export async function telegram() {
   db.initData().then(() => {
