@@ -23,8 +23,8 @@ export const callbackDump =
         );
       }
 
-      bot
-        .sendDocument(msg.chat.id, path.join(__dirname, '../../users.json'))
+      return bot
+        .sendDocument(msg.chat.id, path.join(__dirname, '../../../users.json'))
         .catch((e) => console.log(e.message));
     } catch (err) {
       await errorHandler({ bot, user, data: msg, err });
