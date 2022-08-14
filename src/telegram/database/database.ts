@@ -69,16 +69,20 @@ class DB {
     admin,
     data: { date, time },
   }: {
-    admin: TUserJson;
+    admin?: TUserJson;
     data: { date: EDate; time: ETime };
   }): TUserJson[] => {
     const pack: TUserJson[] = [];
     Object.values(this.data).forEach((user) => {
-      if (
-        user.subs.some((sub) => sub.date === date && sub.time === time) &&
-        user.tlgId !== admin.tlgId
-      ) {
-        pack.push(user);
+      if (user.subs.some((sub) => sub.date === date && sub.time === time)) {
+        // do not add admin to pack
+        if (admin) {
+          if (user.tlgId !== admin.tlgId) {
+            pack.push(user);
+          }
+        } else {
+          pack.push(user);
+        }
       }
     });
     return pack;

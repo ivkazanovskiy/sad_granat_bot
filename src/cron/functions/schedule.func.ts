@@ -16,6 +16,8 @@ export const scheduleLogic = async () => {
   await Counter.checkWeek();
   const { tick } = await Counter.get();
 
+  send(14, EDate.Tue, ETime.Mrn);
+
   switch (tick) {
     case 1:
       if (condition(1, 18, 30)) {

@@ -14,13 +14,14 @@ const templateButton = (i: number): InlineKeyboardButton => ({
 export const templatesKeyboard = (): InlineKeyboardButton[][] => {
   const keyboard: InlineKeyboardButton[][] = [];
   const row: InlineKeyboardButton[] = [];
-  for (let i = 1; i <= 12; i += 1) {
+  for (let i = 1; i <= 14; i += 1) {
     row.push(templateButton(i));
     if (i % 3 === 0) {
       keyboard.push([...row]);
       row.length = 0;
     }
   }
+  if (row.length) keyboard.push([...row]);
   keyboard.push(quitButton);
   return keyboard;
 };

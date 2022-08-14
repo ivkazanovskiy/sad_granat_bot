@@ -27,7 +27,7 @@ export const callbackTemplates =
 
       const dir = await fs.readdir(path.join(__dirname, '../../../templates'));
 
-      for (let i = 1; i <= 12; i += 1) {
+      for (let i = 1; i <= 14; i += 1) {
         if (!dir.includes(`${i}.txt`)) {
           await fs.writeFile(
             path.join(__dirname, `../../../templates/${i}.txt`),
