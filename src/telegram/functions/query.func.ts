@@ -1,9 +1,6 @@
 /* eslint-disable indent */
 import TelegramBot from 'node-telegram-bot-api';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { notifyCache, templateCache } from '..';
-import { userCommands } from '../commands';
 import { notifyGroupKeyboard } from '../keyboards/notify.keyboard';
 import { scheduleKeyboard } from '../keyboards/schedule.keyboard';
 import {
@@ -131,13 +128,6 @@ export const callbackQuery =
         if (!(await db.authorizeUser(data.tlgId))) {
           return bot.sendMessage(query.from.id, 'Пользователь не найден.');
         }
-
-        await bot.setMyCommands(userCommands, {
-          scope: {
-            type: 'chat',
-            chat_id: user.tlgId,
-          },
-        });
 
         await bot.sendMessage(
           data.tlgId,

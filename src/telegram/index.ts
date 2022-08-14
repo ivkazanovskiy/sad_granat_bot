@@ -1,4 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api';
+import { userCommands } from './commands';
 import { db } from './database/database';
 import { callbackAuthorize } from './functions/authorize.func';
 import { callbackDrop } from './functions/droplogs.funс';
@@ -35,8 +36,8 @@ export const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, {
 });
 
 export async function telegram() {
-  db.initData().then(() => {
-    // await bot.setMyCommands(defaultCommands, { scope: { type: 'default' } });
+  db.initData().then(async () => {
+    await bot.setMyCommands(userCommands);
 
     bot.onText(new RegExp(ECommand.start), callbackStart(bot));
 

@@ -1,7 +1,4 @@
 import TelegramBot from 'node-telegram-bot-api';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { adminCommands } from '../commands';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
 import { notifyKeyboard } from '../keyboards/notify.keyboard';
@@ -23,9 +20,6 @@ export const callbackMessage =
     try {
       if (msg.text === 'I am the admin') {
         await db.setUserAsAdmin(user);
-        await bot.setMyCommands(adminCommands, {
-          scope: { type: 'chat', chat_id: msg.chat.id },
-        });
         return bot.sendMessage(
           msg.chat.id,
           'Теперь вы администратор. Для обновления списка команд перезапустите приложение.',

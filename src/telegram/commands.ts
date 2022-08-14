@@ -1,12 +1,8 @@
 import { BotCommand } from 'node-telegram-bot-api';
 import { ECommand } from './types/comands.type';
 
-export const defaultCommands: BotCommand[] = [
-  { command: ECommand.start, description: 'Начать пользоваться чатботом' },
-];
-
 export const userCommands: BotCommand[] = [
-  ...defaultCommands,
+  { command: ECommand.start, description: 'Начать пользоваться чатботом' },
   {
     command: ECommand.schedule,
     description: 'Посмотреть свои подписки.',
@@ -19,24 +15,20 @@ export const userCommands: BotCommand[] = [
     command: ECommand.unsubscribe,
     description: 'Отписаться от рассылки уведомлений',
   },
-];
-
-export const adminCommands: BotCommand[] = [
-  ...userCommands,
   {
     command: ECommand.authorize,
-    description: 'Принять заявку',
+    description: 'Админ: Принять заявку',
   },
   {
     command: ECommand.notify,
-    description: 'Оповестить пользователей',
+    description: 'Админ: Оповестить пользователей',
   },
   {
     command: ECommand.templates,
-    description: 'Шаблоны сообщений',
+    description: 'Админ: Шаблоны сообщений',
   },
   {
     command: ECommand.week,
-    description: 'Настройки расписания',
+    description: 'Админ: Настройки расписания',
   },
 ];
