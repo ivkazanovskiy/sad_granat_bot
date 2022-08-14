@@ -18,6 +18,7 @@ import { errorHandler } from '../error/handler.error';
 import { templateOptionsKeyboard } from '../keyboards/templates.keyboard';
 import { weeksKeyboard } from '../keyboards/week.keyboard';
 import { Counter } from '../../cron/counter/Counter';
+import { Template } from '../../cron/template/Template';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
@@ -245,10 +246,7 @@ export const callbackQuery =
           String(query.message.message_id),
         );
 
-        const template = await fs.readFile(
-          path.join(__dirname, `../../../templates/${data.i}.txt`),
-          'utf8',
-        );
+        const template = await Template.get(data.i);
         await bot.sendMessage(query.message.chat.id, `Cообщение №${data.i}:`);
         await bot.sendMessage(query.message.chat.id, template);
         return bot.answerCallbackQuery(query.id);

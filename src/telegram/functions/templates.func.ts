@@ -25,17 +25,6 @@ export const callbackTemplates =
         );
       }
 
-      const dir = await fs.readdir(path.join(__dirname, '../../../templates'));
-
-      for (let i = 1; i <= 14; i += 1) {
-        if (!dir.includes(`${i}.txt`)) {
-          await fs.writeFile(
-            path.join(__dirname, `../../../templates/${i}.txt`),
-            `Здесь должен быть текст ${i} сообщения`,
-          );
-        }
-      }
-
       return bot.sendMessage(msg.chat.id, 'Выберите сообщение:', {
         reply_markup: {
           inline_keyboard: templatesKeyboard(),

@@ -7,7 +7,7 @@ import { errorHandler } from '../error/handler.error';
 import { notifyKeyboard } from '../keyboards/notify.keyboard';
 import { notifyCache, templateCache } from '..';
 import { ECommand } from '../types/comands.type';
-import { ERole } from '../types/user.type';
+import { Template } from '../../cron/template/Template';
 
 export const callbackMessage =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
@@ -21,7 +21,7 @@ export const callbackMessage =
       return;
     }
     try {
-      if (msg.text === 'I am an admin') {
+      if (msg.text === 'I am the admin') {
         await db.setUserAsAdmin(user);
         await bot.setMyCommands(adminCommands, {
           scope: { type: 'chat', chat_id: msg.chat.id },
@@ -56,13 +56,8 @@ export const callbackMessage =
       ) {
         const cacheData = templateCache.get(msg.chat.id);
         if (!cacheData) return;
-        await fs.writeFile(
-          path.join(
-            __dirname,
-            `../../../templates/${cacheData.templateIndex}.txt`,
-          ),
-          msg.text,
-        );
+
+        await Template.set(cacheData.templateIndex, msg.text);
 
         return bot.sendMessage(
           msg.chat.id,
