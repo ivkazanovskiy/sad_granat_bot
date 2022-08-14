@@ -35,4 +35,8 @@ export const adminCommands: BotCommand[] = [
     command: ECommand.templates,
     description: 'Шаблоны сообщений',
   },
+  {
+    command: ECommand.week,
+    description: 'Настройки расписания',
+  },
 ];

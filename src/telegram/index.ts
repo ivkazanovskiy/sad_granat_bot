@@ -13,6 +13,7 @@ import { callbackStart } from './functions/start.func';
 import { callbackSubscribe } from './functions/subscribe.func';
 import { callbackTemplates } from './functions/templates.func';
 import { callbackUnsubscribe } from './functions/unsubscribe.func';
+import { callbackWeek } from './functions/week.func';
 import { ECommand } from './types/comands.type';
 
 config();
@@ -57,6 +58,8 @@ export async function telegram() {
     bot.onText(new RegExp(ECommand.drop), callbackDrop(bot));
 
     bot.onText(new RegExp(ECommand.templates), callbackTemplates(bot));
+
+    bot.onText(new RegExp(ECommand.week), callbackWeek(bot));
 
     bot.on('callback_query', callbackQuery(bot));
 

@@ -12,6 +12,8 @@ export enum EEvent {
   'templates' = 'tmp',
   'openTemplate' = 'opTmp',
   'editTemplate' = 'edTmp',
+  'editWeek' = 'edWk',
+  'setWeek' = 'stWk',
 }
 
 export type TQueryData =
@@ -57,5 +59,12 @@ export type TQueryData =
     }
   | {
       event: EEvent.editTemplate;
+      i: number;
+    }
+  | {
+      event: EEvent.editWeek;
+    }
+  | {
+      event: EEvent.setWeek;
       i: number;
     };

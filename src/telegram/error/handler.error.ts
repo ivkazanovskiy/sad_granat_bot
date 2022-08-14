@@ -15,7 +15,7 @@ export const errorHandler = async ({
   err: any;
 }) => {
   await fs.appendFile(
-    path.join(__dirname, '../../../logs.jsom'),
+    path.join(__dirname, '../../../logs.txt'),
     `${err.message}\n${JSON.stringify(data, null, 2)}\n\n`,
   );
   bot.sendMessage(user.tlgId, 'Непредвиденная ошибка сервера');

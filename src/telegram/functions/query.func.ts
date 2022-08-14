@@ -16,6 +16,8 @@ import { EEvent, TQueryData } from '../types/query-data.type';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
 import { templateOptionsKeyboard } from '../keyboards/templates.keyboard';
+import { weeksKeyboard } from '../keyboards/week.keyboard';
+import { Counter } from '../../cron/counter/Counter';
 
 export const callbackQuery =
   (bot: TelegramBot) => async (query: TelegramBot.CallbackQuery) => {
@@ -247,6 +249,7 @@ export const callbackQuery =
           path.join(__dirname, `../../../templates/${data.i}.txt`),
           'utf8',
         );
+        await bot.sendMessage(query.message.chat.id, `Cообщение №${data.i}:`);
         await bot.sendMessage(query.message.chat.id, template);
         return bot.answerCallbackQuery(query.id);
       }
@@ -265,8 +268,37 @@ export const callbackQuery =
 
         await bot.sendMessage(
           query.message.chat.id,
-          'Введите текст сообщения:',
+          `Введите текст сообщения №${data.i}:`,
         );
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.editWeek) {
+        await bot.editMessageReplyMarkup(
+          {
+            inline_keyboard: weeksKeyboard(),
+          },
+          {
+            message_id: query.message.message_id,
+            chat_id: query.message.chat.id,
+          },
+        );
+        return bot.answerCallbackQuery(query.id);
+      }
+
+      if (data.event === EEvent.setWeek) {
+        // delete message before showing result
+        await bot.deleteMessage(
+          query.message.chat.id,
+          String(query.message.message_id),
+        );
+        await Counter.set(data.i);
+
+        const message = data.i
+          ? `Задан номер текущей недели: №${data.i}`
+          : 'Отправка уведомлений приостановлена.';
+
+        await bot.sendMessage(query.message.chat.id, message);
         return bot.answerCallbackQuery(query.id);
       }
     } catch (err) {

@@ -9,4 +9,5 @@ export enum ECommand {
   logs = '/logs',
   drop = '/drop',
   templates = '/templates',
+  week = '/week',
 }
