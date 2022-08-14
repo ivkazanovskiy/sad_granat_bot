@@ -133,4 +133,4 @@ dist
 users.json
 counter.json
 logs.txt
-/templates/*
+/templates/*.txt
