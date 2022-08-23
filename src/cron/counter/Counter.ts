@@ -17,7 +17,7 @@ export class Counter {
     if (prevData) return;
 
     // init Counter only once
-    const week = moment().tz(this.tz).week();
+    const week = moment().tz(this.tz).isoWeek();
     const tick = 1;
     await writeFile(
       path.join(__dirname, '../../../counter.json'),
@@ -61,7 +61,7 @@ export class Counter {
 
   static async checkWeek() {
     const prevData = await this.get();
-    const currentWeek = moment().tz(this.tz).week();
+    const currentWeek = moment().tz(this.tz).isoWeek();
     // in the first week of the year or every next week change Counter.week
     if (currentWeek === 1 || currentWeek > prevData.week) {
       if (prevData.tick >= 6) {
