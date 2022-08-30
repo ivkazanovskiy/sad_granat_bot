@@ -55,13 +55,14 @@ export class Counter {
     );
   }
 
-  static async nextTick() {
-    const counter = await this.get();
-  }
-
   static async checkWeek() {
     const prevData = await this.get();
     const currentWeek = moment().tz(this.tz).isoWeek();
+    const currentWeekDay = moment().tz(this.tz).isoWeekday();
+
+    // change week only on monday
+    if (currentWeekDay !== 1) return;
+
     // in the first week of the year or every next week change Counter.week
     if (currentWeek === 1 || currentWeek > prevData.week) {
       if (prevData.tick >= 6) {
