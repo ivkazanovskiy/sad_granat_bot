@@ -158,7 +158,7 @@ export const callbackQuery =
 
         const users = db.getOtherUsers(user);
 
-        await Promise.all(
+        await Promise.allSettled(
           users.map(({ tlgId }) =>
             bot.sendMessage(
               tlgId,
@@ -210,7 +210,7 @@ export const callbackQuery =
           return bot.answerCallbackQuery(query.id);
         }
 
-        await Promise.all(
+        await Promise.allSettled(
           users.map(({ tlgId }) =>
             bot.sendMessage(
               tlgId,

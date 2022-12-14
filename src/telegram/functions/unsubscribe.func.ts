@@ -2,7 +2,6 @@ import TelegramBot from 'node-telegram-bot-api';
 import { db } from '../database/database';
 import { errorHandler } from '../error/handler.error';
 import { scheduleKeyboard } from '../keyboards/schedule.keyboard';
-import { User } from '../models/user.model';
 
 export const callbackUnsubscribe =
   (bot: TelegramBot) => async (msg: TelegramBot.Message) => {
